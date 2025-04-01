@@ -1,0 +1,52 @@
+-- Bees Gene Extracting Automation
+-- v1.0
+name "Bee Genes 3000"
+
+every 20 ticks do
+    -- redstone active on sfm block -> disabled
+    if redstone eq 0 then
+        -- setup items from AE2 System with an ME Interface with Craft. Card
+        -- using sturdy bee cages already set up into the breeder
+        -- no need for new cages. but possible through me_interface
+        input 
+            honey_treat,
+            glass_bottle,
+            poppy
+        from me_interface
+        output poppy to breeder slots 3, 4
+        output honey_treat to incubator slots 1
+        output glass_bottle to bottler slots 0
+        forget
+        
+        -- new baby bee, grow em up first
+        input *bee_cage from breeder slots 5
+        output to incubator slots 0
+        forget
+        
+        -- dispenser puts bee into world into active piston to squish + drops cage   
+        input from incubator slots 2
+        output to dispenser
+        forget
+    
+        -- barrel with item collector collects gene bottle + empty bee cage
+        -- bottle into centrifuge, bee cage back into the breeder
+        -- excess goes into ae2 system
+        input from puffer
+        output *bee_cage to breeder slots 0
+        output gene_bottle to centrifuge slots 1
+        output except *bee_cage, gene_bottle to me_interface
+        forget
+    
+        -- extracted genes goes into gene indexer
+        input from centrifuge slots 2-10
+        output to gene_indexer
+        forget
+    end
+end
+
+-- power em up!
+every 1 ticks do
+    input fe:: from powersource
+    output fe:: to breeder, incubator, centrifuge
+    forget
+end

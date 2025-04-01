@@ -1,0 +1,32 @@
+-- HNN Simulationchamber Automation
+-- v1.0
+
+name "HNN Simulations"
+
+every 20 ticks do
+    -- setup simulation chambers with prediction matrix supplied by ae2
+    input prediction_matrix from me_interface
+    output prediction_matrix to each simulation
+    forget
+
+    -- transfer predictions accordingly
+    input *prediction from each simulation
+    output 
+        overworld_prediction,
+        nether_prediction,
+        end_prediction
+    to me_interface
+    output prediction to each looter slots 0
+    forget
+
+    -- transfer resulting items into ae2
+    input from looter slots 1-16
+    output to me_interface
+    forget
+end
+
+-- give em power
+every 1 ticks do
+    input fe:: from powersource
+    output fe:: to each simulation, looter
+end

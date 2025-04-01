@@ -1,0 +1,47 @@
+-- Bees! Productive Beehives processing with AE2
+-- v1.0
+
+name "Bees 9000"
+
+every 20 ticks do
+    -- Fill beehives with Glassbottles for honey bottles (optional)
+    input         
+       glass_bottle
+    from me_interface
+    output glass_bottle to each beehive slots 0
+    forget
+
+    -- Beehive combs > Centrifuge
+    input 
+        minecraft:honey_bottle,
+        minecraft:honeycomb*,   -- vanilla honeycomb + honeycomb_block
+        productivebees:*comb,   -- productivebees _honeycomb + _comb (block)
+        pollen_puff             -- Byproduct of The_Bumblezone
+    from each beehive
+
+    output 
+        minecraft:honeycomb*,
+        minecraft:honey_bottle,
+        pollen_puff
+    to me_interface
+    output productivebees:*_honeycomb to each centrifuge slots 1
+    output productivebees:*_comb to each heated_centrifuge slots 1
+    forget
+
+    -- Output of Centrifuge > AE2
+    input from each centrifuge slots 2-10
+    input from each heated_centrifuge slots 2-10
+    output to me_interface
+    forget
+
+    input fluid:: from each centrifuge, heated_centrifuge
+    output fluid:: to me_interface
+    forget
+end
+
+-- Power Management
+every 1 ticks do
+    input fe:: from powersource
+    output fe:: to each centrifuge, heated_centrifuge
+    forget
+end
